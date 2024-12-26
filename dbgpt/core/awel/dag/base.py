@@ -41,10 +41,20 @@ if TYPE_CHECKING:
 
 
 def _is_async_context():
+    """
+    _is_async_context 函数通过检查当前是否存在事件循环和任务来判断是否处于异步上下文环境中。
+    如果当前存在事件循环且有正在运行的任务，则返回 True，否则返回 False。这个函数通常用于在代码中需要根据是否处于异步上下文环境来执行不同逻辑的场景。
+    """
     try:
-        loop = asyncio.get_running_loop()
-        return asyncio.current_task(loop=loop) is not None
+        """
+        如果成功获取到事件循环，使用 asyncio.current_task(loop=loop) 获取当前任务。
+        如果当前任务存在（即返回值不是 None），则表示当前处于异步上下文环境中，函数返回 True。
+        """
+        loop = asyncio.get_running_loop() # 主要逻辑是尝试获取当前正在运行的事件循环（event loop）
+        return asyncio.current_task(loop=loop) is not None # 检查是否存在当前任务（current task）
     except RuntimeError:
+        """如果当前任务不存在，或者在获取事件循环时抛出了 RuntimeError，则表示当前不处于异步上下文环境中，函数返回 False"""
+        print('*' * 20)
         return False
 
 
@@ -134,13 +144,13 @@ class DependencyMixin(ABC):
 
 
 class DAGVar:
-    """The DAGVar is used to store the current DAG context."""
+    """ The DAGVar is used to store the current DAG context. """
+    """ 一个上下文管理器，必须有一个这样的工具包，以便当进入上下文管理器的代码后，有地方存储上下文代码产生的数据 """
 
     _thread_local = threading.local()
-    _async_local: contextvars.ContextVar = contextvars.ContextVar(
-        "current_dag_stack", default=deque()
-    )
+    _async_local: contextvars.ContextVar = contextvars.ContextVar("current_dag_stack", default=deque())
     _system_app: Optional[SystemApp] = None
+
     # The executor for current DAG, this is used run some sync tasks in async DAG
     _executor: Optional[Executor] = None
 
@@ -151,8 +161,7 @@ class DAGVar:
 
     @classmethod
     def enter_dag(cls, dag) -> None:
-        """Enter a DAG context.
-
+        """ Enter a DAG context.
         Args:
             dag (DAG): The DAG to enter
         """
@@ -808,6 +817,15 @@ class DAG:
         self._event_loop_task_id_to_ctx: Dict[int, DAGContext] = {}
         self._default_dag_variables = default_dag_variables
 
+    def __enter__(self): # DAG 初始化后进入一个 DAG 上下文
+        """Enter a DAG context."""
+        DAGVar.enter_dag(self)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit a DAG context."""
+        DAGVar.exit_dag()
+
     def _append_node(self, node: DAGNode) -> None:
         if node.node_id in self.node_map:
             return
@@ -952,15 +970,6 @@ class DAG:
         """Return the graph of current DAG."""
         dot, mermaid_str = _get_graph(self)
         return mermaid_str if mermaid else dot
-
-    def __enter__(self):
-        """Enter a DAG context."""
-        DAGVar.enter_dag(self)
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Exit a DAG context."""
-        DAGVar.exit_dag()
 
     def __hash__(self) -> int:
         """Return the hash value of current DAG.

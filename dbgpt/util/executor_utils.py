@@ -26,7 +26,7 @@ class DefaultExecutorFactory(ExecutorFactory):
     def init_app(self, system_app: SystemApp):
         pass
 
-    def create(self) -> Executor:
+    def create(self) -> Executor: # 实现父类的 create 方法
         return self._executor
 
 

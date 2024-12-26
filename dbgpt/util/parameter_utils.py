@@ -25,15 +25,12 @@ class ParameterDescription:
 @dataclass
 class BaseParameters:
     @classmethod
-    def from_dict(
-        cls, data: dict, ignore_extra_fields: bool = False
-    ) -> "BaseParameters":
+    def from_dict(cls, data: dict, ignore_extra_fields: bool = False) -> "BaseParameters":
         """Create an instance of the dataclass from a dictionary.
 
         Args:
             data: A dictionary containing values for the dataclass fields.
-            ignore_extra_fields: If True, any extra fields in the data dictionary that are
-                not part of the dataclass will be ignored.
+            ignore_extra_fields: If True, any extra fields in the data dictionary that are not part of the dataclass will be ignored.
                 If False, extra fields will raise an error. Defaults to False.
         Returns:
             An instance of the dataclass with values populated from the given dictionary.
@@ -110,15 +107,9 @@ class BaseParameters:
 
 @dataclass
 class BaseServerParameters(BaseParameters):
-    host: Optional[str] = field(
-        default="0.0.0.0", metadata={"help": "The host IP address to bind to."}
-    )
-    port: Optional[int] = field(
-        default=None, metadata={"help": "The port number to bind to."}
-    )
-    daemon: Optional[bool] = field(
-        default=False, metadata={"help": "Run the server as a daemon."}
-    )
+    host: Optional[str] = field(default="0.0.0.0", metadata={"help": "The host IP address to bind to."})
+    port: Optional[int] = field(default=None, metadata={"help": "The port number to bind to."})
+    daemon: Optional[bool] = field(default=False, metadata={"help": "Run the server as a daemon."})
     log_level: Optional[str] = field(
         default=None,
         metadata={

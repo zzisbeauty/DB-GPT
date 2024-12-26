@@ -127,17 +127,14 @@ class ReduceStreamOperator(BaseOperator, Generic[IN, OUT]):
 
 class MapOperator(BaseOperator, Generic[IN, OUT]):
     """Map operator that applies a mapping function to its inputs.
-
     This operator transforms its input data using a provided mapping function and
     passes the transformed data downstream.
     """
 
     def __init__(self, map_function: Optional[MapFunc] = None, **kwargs):
         """Create a MapDAGNode with a mapping function.
-
         Args:
             map_function: A function that defines how to map the input data.
-
         Raises:
             ValueError: If the map_function is not callable.
         """
@@ -146,24 +143,18 @@ class MapOperator(BaseOperator, Generic[IN, OUT]):
             raise ValueError("map_function must be callable")
 
         if map_function and self.check_serializable:
-            super()._do_check_serializable(
-                map_function, f"Operator: {self}, map_function: {map_function}"
-            )
+            super()._do_check_serializable(map_function, f"Operator: {self}, map_function: {map_function}")
 
         self.map_function = map_function
 
     async def _do_run(self, dag_ctx: DAGContext) -> TaskOutput[OUT]:
         """Run the mapping operation on the DAG context's inputs.
-
         This method applies the mapping function to the input context and updates
         the DAG context with the new data.
-
         Args:
             dag_ctx (DAGContext[IN]): The current context of the DAG.
-
         Returns:
             TaskOutput[OUT]: The task output after this node has been run.
-
         Raises:
             ValueError: If not a single parent or the map_function is not callable
         """
@@ -171,18 +162,13 @@ class MapOperator(BaseOperator, Generic[IN, OUT]):
         call_data = curr_task_ctx.call_data
         if not call_data and not curr_task_ctx.task_input.check_single_parent():
             num_parents = len(curr_task_ctx.task_input.parent_outputs)
-            raise ValueError(
-                f"task {curr_task_ctx.task_id} MapDAGNode expects single parent,"
-                f"now number of parents: {num_parents}"
-            )
+            raise ValueError(f"task {curr_task_ctx.task_id} MapDAGNode expects single parent, now number of parents: {num_parents}")
         map_function = self.map_function or self.map
 
         if call_data:
             wrapped_call_data = await curr_task_ctx._call_data_to_output()
             if not wrapped_call_data:
-                raise ValueError(
-                    f"task {curr_task_ctx.task_id} MapDAGNode expects wrapped_call_data"
-                )
+                raise ValueError(f"task {curr_task_ctx.task_id} MapDAGNode expects wrapped_call_data")
             output: TaskOutput[OUT] = await wrapped_call_data.map(map_function)
             curr_task_ctx.set_task_output(output)
             return output

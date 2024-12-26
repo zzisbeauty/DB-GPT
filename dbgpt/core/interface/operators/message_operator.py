@@ -243,14 +243,10 @@ class PreChatHistoryLoadOperator(
         return history_messages
 
 
-class ConversationMapperOperator(
-    BaseConversationOperator, MapOperator[List[BaseMessage], List[BaseMessage]]
-):
+class ConversationMapperOperator(BaseConversationOperator, MapOperator[List[BaseMessage], List[BaseMessage]]):
     """The base conversation mapper operator."""
 
-    def __init__(
-        self, message_mapper: Optional[_MultiRoundMessageMapper] = None, **kwargs
-    ):
+    def __init__(self, message_mapper: Optional[_MultiRoundMessageMapper] = None, **kwargs):
         """Create a new ConversationMapperOperator."""
         MapOperator.__init__(self, **kwargs)
         self._message_mapper = message_mapper

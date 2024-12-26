@@ -133,3 +133,7 @@ class Chunk(Document):
                 "Please install llama_index by command `pip install llama_index"
             )
         return TextNode(text=chunk.content, metadata=chunk.metadata)
+
+"""
+这段代码定义了两个类 Document 和 Chunk，用于表示文档和文档的分块。这些类提供了一些方法来处理这些数据，包括在不同格式之间进行转换。
+"""

@@ -167,9 +167,7 @@ class BasePromptBuilderOperator(BaseConversationOperator, ABC):
 PromptTemplateType = Union[ChatPromptTemplate, PromptTemplate, MessageType, str]
 
 
-class PromptBuilderOperator(
-    BasePromptBuilderOperator, MapOperator[Dict[str, Any], List[ModelMessage]]
-):
+class PromptBuilderOperator(BasePromptBuilderOperator, MapOperator[Dict[str, Any], List[ModelMessage]]):
     """The operator to build the prompt with static prompt.
 
     Examples:

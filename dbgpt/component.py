@@ -14,6 +14,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type, TypeVar, Union
 
+
+# 导入 util package 时，这个 package 中的代码会自动运行
 from dbgpt.util import AppConfig
 from dbgpt.util.annotations import PublicAPI
 
@@ -159,14 +161,8 @@ T = TypeVar("T", bound=BaseComponent)
 class SystemApp(LifeCycle):
     """Main System Application class that manages the lifecycle and registration of components."""
 
-    def __init__(
-        self,
-        asgi_app: Optional["FastAPI"] = None,
-        app_config: Optional[AppConfig] = None,
-    ) -> None:
-        self.components: Dict[
-            str, BaseComponent
-        ] = {}  # Dictionary to store registered components.
+    def __init__(self, asgi_app: Optional["FastAPI"] = None, app_config: Optional[AppConfig] = None,) -> None:
+        self.components: Dict[str, BaseComponent] = {}  # Dictionary to store registered components.
         self._asgi_app = asgi_app
         self._app_config = app_config or AppConfig()
         self._stop_event = threading.Event()

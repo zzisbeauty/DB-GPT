@@ -19,7 +19,7 @@ from dbgpt.util.tracer.span_storage import MemorySpanStorage
 
 logger = logging.getLogger(__name__)
 
-
+# 实现了一个默认的追踪器，用于管理和记录应用程序中的跨度（span）。跨度是追踪系统中的一个基本概念，代表了一个操作或事件的执行时间和上下文。
 class DefaultTracer(Tracer):
     def __init__(
         self,
@@ -100,14 +100,18 @@ class DefaultTracer(Tracer):
 
 
 class TracerManager:
-    """The manager of current tracer"""
-
+    """ The manager of current tracer """
+    # TracerManager 的类，用于管理当前的追踪器（tracer）。追踪器是一种用于监控和记录应用程序执行过程的工具，通常用于性能分析、调试和故障排除
     def __init__(self) -> None:
+        # 定义一个可选的 SystemApp 类型的变量，初始值为 None
         self._system_app: Optional[SystemApp] = None
-        self._trace_context_var: ContextVar[TracerContext] = ContextVar(
-            "trace_context",
-            default=TracerContext(),
-        )
+        # # 定义一个 ContextVar 类型的变量，存储 TracerContext 的默认值
+
+        # TracerContext 泛型； ContextVar 保存的上下文变量为 TracerContext； 其名称为 trace_context
+        # ContextVar 是 Python 中的一种机制，用于在线程或异步协程中保存上下文变量，确保变量的值在不同上下文中互不干扰。
+        # tmp = ContextVar("trace_context",default=TracerContext(),)
+        # self._trace_context_var: ContextVar[TracerContext] = tmp 
+        self._trace_context_var = ContextVar("trace_context",default=TracerContext(),)
 
     def initialize(
         self, system_app: SystemApp, trace_context_var: ContextVar[TracerContext] = None
@@ -133,16 +137,12 @@ class TracerManager:
         """
         tracer = self._get_tracer()
         if not tracer:
-            return Span(
-                "empty_span", "empty_span", span_type=span_type, metadata=metadata
-            )
+            return Span("empty_span", "empty_span", span_type=span_type, metadata=metadata)
         if not parent_span_id:
             parent_span_id = self.get_current_span_id()
         if not span_type and parent_span_id:
             span_type = self._get_current_span_type()
-        return tracer.start_span(
-            operation_name, parent_span_id, span_type=span_type, metadata=metadata
-        )
+        return tracer.start_span(operation_name, parent_span_id, span_type=span_type, metadata=metadata)
 
     def end_span(self, span: Span, **kwargs):
         tracer = self._get_tracer()
@@ -195,7 +195,7 @@ class TracerManager:
         return wrapper()
 
 
-root_tracer: TracerManager = TracerManager()
+root_tracer: TracerManager = TracerManager() # ***********************************************
 
 
 def trace(operation_name: Optional[str] = None, **trace_kwargs):
@@ -237,7 +237,7 @@ def _parse_operation_name(func, *args):
 def initialize_tracer(
     tracer_filename: str,
     root_operation_name: str = "DB-GPT-Webserver",
-    system_app: Optional[SystemApp] = None,
+    system_app: Optional[SystemApp] = None, 
     tracer_storage_cls: Optional[str] = None,
     create_system_app: bool = False,
     enable_open_telemetry: bool = False,

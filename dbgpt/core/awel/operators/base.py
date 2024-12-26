@@ -40,9 +40,8 @@ logger = logging.getLogger(__name__)
 F = TypeVar("F", bound=FunctionType)
 
 CALL_DATA = Union[Dict[str, Any], Any]
-CURRENT_DAG_CONTEXT: ContextVar[Optional[DAGContext]] = ContextVar(
-    "current_dag_context", default=None
-)
+# 当前DAG 的上下文变量名称
+CURRENT_DAG_CONTEXT: ContextVar[Optional[DAGContext]] = ContextVar("current_dag_context", default=None)
 
 
 class WorkflowRunner(ABC, Generic[T]):
@@ -75,7 +74,7 @@ class WorkflowRunner(ABC, Generic[T]):
                 state and data.
         """
 
-
+# 初始化执行器
 default_runner: Optional[WorkflowRunner] = None
 
 
@@ -87,24 +86,20 @@ def _dev_mode() -> bool:
     """
     return default_runner is None
 
-
+# DAG执行器运行的是 operator，因此这里还会定义一些 operator 的 meta cls 信息
 class BaseOperatorMeta(ABCMeta):
     """Metaclass of BaseOperator."""
 
     @classmethod
     def _apply_defaults(cls, func: F) -> F:
         # sig_cache = signature(func)
-        @functools.wraps(func)
+        @functools.wraps(func) # 使用 functools.wraps 保留原函数 func 的元信息。同时也说明此函数是一个包装函数
         def apply_defaults(self: "BaseOperator", *args: Any, **kwargs: Any) -> Any:
             dag: Optional[DAG] = kwargs.get("dag") or DAGVar.get_current_dag()
             task_id: Optional[str] = kwargs.get("task_id")
-            system_app: Optional[SystemApp] = (
-                kwargs.get("system_app") or DAGVar.get_current_system_app()
-            )
+            system_app: Optional[SystemApp] = (kwargs.get("system_app") or DAGVar.get_current_system_app())
             executor = kwargs.get("executor") or DAGVar.get_executor()
-            variables_provider = (
-                kwargs.get("variables_provider") or DAGVar.get_variables_provider()
-            )
+            variables_provider = (kwargs.get("variables_provider") or DAGVar.get_variables_provider())
             if not executor:
                 if system_app:
                     executor = system_app.get_component(
@@ -146,9 +141,12 @@ class BaseOperatorMeta(ABCMeta):
             if not kwargs.get("variables_provider"):
                 kwargs["variables_provider"] = variables_provider
             real_obj = func(self, *args, **kwargs)
+            print("real_obj: ", real_obj)
             return real_obj
-
-        return cast(F, apply_defaults)
+        
+        res = cast(F, apply_defaults)
+        print("res: ", res)
+        return res
 
     def __new__(cls, name, bases, namespace, **kwargs):
         """Create a new BaseOperator class with default arguments."""
@@ -159,8 +157,7 @@ class BaseOperatorMeta(ABCMeta):
 
 
 class BaseOperator(DAGNode, ABC, Generic[OUT], metaclass=BaseOperatorMeta):
-    """Abstract base class for operator nodes that can be executed within a workflow.
-
+    """ Abstract base class for operator nodes that can be executed within a workflow.
     This class extends DAGNode by adding execution capabilities.
     """
 
@@ -179,15 +176,12 @@ class BaseOperator(DAGNode, ABC, Generic[OUT], metaclass=BaseOperatorMeta):
         **kwargs,
     ) -> None:
         """Create a BaseOperator with an optional workflow runner.
-
         Args:
-            runner (WorkflowRunner, optional): The runner used to execute the workflow.
-                Defaults to None.
+            runner (WorkflowRunner, optional): The runner used to execute the workflow. Defaults to None.
         """
         super().__init__(node_id=task_id, node_name=task_name, dag=dag, **kwargs)
         if not runner:
             from dbgpt.core.awel import DefaultWorkflowRunner
-
             runner = DefaultWorkflowRunner()
         if "incremental_output" in kwargs:
             self.incremental_output = bool(kwargs["incremental_output"])
@@ -280,9 +274,7 @@ class BaseOperator(DAGNode, ABC, Generic[OUT], metaclass=BaseOperatorMeta):
         if not is_empty_data(call_data):
             call_data = {"data": call_data}
         with root_tracer.start_span("dbgpt.awel.operator.call"):
-            out_ctx = await self._runner.execute_workflow(
-                self, call_data, exist_dag_ctx=dag_ctx, dag_variables=dag_variables
-            )
+            out_ctx = await self._runner.execute_workflow(self, call_data, exist_dag_ctx=dag_ctx, dag_variables=dag_variables)
             return out_ctx.current_task_context.task_output.output
 
     def _blocking_call(

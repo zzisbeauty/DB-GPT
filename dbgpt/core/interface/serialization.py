@@ -59,3 +59,8 @@ class Serializer(ABC):
         Returns:
             Serializable: The serializable object
         """
+
+"""
+这段代码定义了一个序列化接口，包括可序列化对象的抽象基类 Serializable 和序列化器的抽象基类 Serializer。
+通过这些接口，可以实现对象的序列化和反序列化，以便在存储或传输时使用。
+"""

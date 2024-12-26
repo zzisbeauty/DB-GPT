@@ -130,3 +130,8 @@ class CacheClient(ABC, Generic[K, V]):
     @abstractmethod
     def new_value(self, **kwargs) -> CacheValue[K]:
         """Create a cache key with params."""
+
+"""
+这段代码定义了一个缓存接口，包括缓存键、缓存值和缓存客户端的抽象基类，
+以及缓存的检索策略和缓存策略的枚举类。这个接口可以用于实现不同类型的缓存，例如内存缓存、数据库缓存等。
+"""
