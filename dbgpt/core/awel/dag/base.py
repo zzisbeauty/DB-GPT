@@ -1092,9 +1092,7 @@ def _get_graph(dag: DAG):
     return dot, mermaid_str
 
 
-def _visualize_dag(
-    dag: DAG, view: bool = True, generate_mermaid: bool = True, **kwargs
-) -> Optional[str]:
+def _visualize_dag(dag: DAG, view: bool = True, generate_mermaid: bool = True, **kwarg) -> Optional[str]:
     """Visualize the DAG.
 
     Args:

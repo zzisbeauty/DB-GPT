@@ -1,6 +1,6 @@
 from typing import get_origin
 
-import pydantic
+import pydantic # Pydantic 是一个强大的 Python 数据验证和解析库
 
 if pydantic.VERSION.startswith("1."):
     PYDANTIC_VERSION = 1

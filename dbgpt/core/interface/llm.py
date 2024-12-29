@@ -10,7 +10,7 @@ from typing import Any, AsyncIterator, Coroutine, Dict, List, Optional, Tuple, U
 
 from cachetools import TTLCache
 
-from dbgpt._private.pydantic import BaseModel, model_to_dict
+from dbgpt._private.pydantic import model_to_dict, BaseModel  # 这里的 BaseModel 是基础的数据模型，不是 LLM，是为了对数据做一些封装处理，定义 data model
 from dbgpt.core.interface.message import ModelMessage, ModelMessageRoleType 
 from dbgpt.util import BaseParameters
 from dbgpt.util.annotations import PublicAPI

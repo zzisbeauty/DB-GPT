@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 class JoinOperator(BaseOperator, Generic[OUT]):
     """Operator that joins inputs using a custom combine function.
-
+    使用自定义的组合函数链接输入的 operator cls obj
     This node type is useful for combining the outputs of upstream nodes.
     """
 

@@ -40,3 +40,6 @@ __ALL__ = [
     "FunctionDynamicOptions",
     "VariablesDynamicOptions",
 ]
+
+
+print("import dbgpt core.awel.   flow 相关模块, 包含一些 utils 模块需要导入，这些模块要在 core awel 中使用")

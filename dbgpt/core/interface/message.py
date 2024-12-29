@@ -7,12 +7,7 @@ from datetime import datetime
 from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 
 from dbgpt._private.pydantic import BaseModel, Field, model_to_dict
-from dbgpt.core.interface.storage import (
-    InMemoryStorage,
-    ResourceIdentifier,
-    StorageInterface,
-    StorageItem,
-)
+from dbgpt.core.interface.storage import (InMemoryStorage,ResourceIdentifier,StorageInterface,StorageItem,)
 
 
 class BaseMessage(BaseModel, ABC):

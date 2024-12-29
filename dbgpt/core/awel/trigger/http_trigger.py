@@ -702,13 +702,7 @@ class HttpTrigger(Trigger):
         return dynamic_route_function
 
 
-async def _trigger_dag(
-    body: Any,
-    dag: DAG,
-    streaming_response: Optional[bool] = False,
-    response_headers: Optional[Dict[str, str]] = None,
-    response_media_type: Optional[str] = None,
-) -> Any:
+async def _trigger_dag(body: Any,dag: DAG,streaming_response: Optional[bool] = False,response_headers: Optional[Dict[str, str]] = None,response_media_type: Optional[str] = None,) -> Any:
     from fastapi import BackgroundTasks
     from fastapi.responses import StreamingResponse
 
@@ -723,9 +717,7 @@ async def _trigger_dag(
         "awel_node_name": end_node.node_name,
     }
     if not streaming_response:
-        with root_tracer.start_span(
-            "dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata
-        ):
+        with root_tracer.start_span("dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata):
             return await end_node.call(call_data=body)
     else:
         headers = response_headers
@@ -738,9 +730,7 @@ async def _trigger_dag(
                 "Transfer-Encoding": "chunked",
             }
         _generator = await end_node.call_stream(call_data=body)
-        trace_generator = root_tracer.wrapper_async_stream(
-            _generator, "dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata
-        )
+        trace_generator = root_tracer.wrapper_async_stream(_generator, "dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata)
 
         async def _after_dag_end():
             await dag._after_dag_end(end_node.current_event_loop_task_id)

@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 from typing import Dict, Type
-
+# 之前：from utils import 序列化信息 =》之后：LLM和message和storage准备完毕，接下来 AWEL
 from dbgpt.core.awel.flow import ResourceCategory, register_resource
 from dbgpt.core.interface.serialization import Serializable, Serializer
 from dbgpt.util.i18n_utils import _

@@ -209,3 +209,5 @@ def _check_has_http_trigger(dags: List[DAG]) -> bool:
             if isinstance(trigger, HttpTrigger):
                 return True
     return False
+
+print("import dbgpt core awel 相关模块 。。。")

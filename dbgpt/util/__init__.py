@@ -12,3 +12,5 @@ __ALL__ = [
     "EnvArgumentParser",
     "AppConfig",
 ]
+
+print("from DBGPT utils Import Config Info ...")

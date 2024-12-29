@@ -83,9 +83,7 @@ class EmbeddingLoader:
                 kwargs = param.build_kwargs(model_name=param.model_path)
                 return HuggingFaceEmbeddings(**kwargs)
 
-    def load_rerank_model(
-        self, model_name: str, param: BaseEmbeddingModelParameters
-    ) -> RerankEmbeddings:
+    def load_rerank_model(self, model_name: str, param: BaseEmbeddingModelParameters) -> RerankEmbeddings:
         metadata = {
             "model_name": model_name,
             "run_service": SpanTypeRunName.EMBEDDING_MODEL.value,

@@ -14,13 +14,7 @@ logger = logging.getLogger("dbgpt_cli")
 
 
 @click.group()
-@click.option(
-    "--log-level",
-    required=False,
-    type=str,
-    default="warn",
-    help="Log level",
-)
+@click.option("--log-level",required=False,type=str,default="warn",help="Log level",)
 @click.version_option()
 def cli(log_level: str):
     logger.setLevel(logging.getLevelName(log_level.upper()))
